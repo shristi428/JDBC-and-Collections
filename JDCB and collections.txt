@@ -1,0 +1,238 @@
+aimport java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+class Employee{
+	String name;
+	int id;
+	int age;
+	String dept;
+	int sal;
+	
+	Employee(String n, int i, int a,String d,int s){
+		this.name=n;
+		this.age=a;
+		this.dept=d;
+		this.id=i;
+		this.sal=s;
+	}
+	
+	public String getname() {
+		return name;
+	}
+	
+	public int getage() {
+		return age;
+	}
+	
+	public int getid() {
+		return id;
+	}
+	public String getdept() {
+		return dept;
+	}
+	public int getsal() {
+		return sal;
+	}
+}
+public class Assignment3 {
+
+	public static void main(String[] args) throws SQLException {
+		// TODO Auto-generated method stub
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/emp","root","robin");
+			HashSet<Employee>obj1= new HashSet<Employee>();
+			String num,dep;
+			int sal,age,id,n=0,insert = 0;
+		      if(con==null)
+				{
+				 System.out.println("Connection not established");
+				 System.out.println("-------------------------------------------");
+				}
+				else
+				{
+				 System.out.println("Connection Ok");
+				 System.out.println("-------------------------------------------");
+				}
+		      Scanner sc= new Scanner(System.in);
+		      
+		      while(n!=5) {
+		    	  System.out.println("1.Insert\n2.Update\n3.Delete\n4.Select\n5.exit");
+					System.out.println("Enter your choice ");
+					n =sc.nextInt();
+					switch(n) {
+					case 1:
+					{
+						System.out.println("Enter the name of the employee");
+						num=sc.next();
+						System.out.println("Enter the id of the employee ");
+						id=sc.nextInt();
+						System.out.println("Enter the age of the employee");  
+						age=sc.nextInt();
+						System.out.println("Enter the department of the employee ");
+						dep=sc.next();
+						System.out.println("Enter the salary of the employee ");
+						sal=sc.nextInt();
+				        obj1.add(new Employee(num,id,age,dep,sal));
+						PreparedStatement pstmt=con.prepareStatement("insert into Employee(name,id,age,dept,sal) values(?,?,?,?,?)");
+						for(Employee a: obj1) {
+							System.out.println(" "+a.id+" "+a.name);
+						pstmt.setString(1, a.getname());
+						pstmt.setInt(2, a.getid());
+						pstmt.setInt(3,a.getage());
+						pstmt.setString(4,a.getdept());	
+						pstmt.setInt(5, a.getsal());
+						insert=pstmt.executeUpdate();
+						}
+						if(insert>0) 
+							 System.out.println("New row inserted");
+						     System.out.println("Name "+" "+" ID "+"  "+" Age "+"  "+" Department "+"  "+"Salary ");
+						     Statement stmt=con.createStatement();  
+						     ResultSet rs=stmt.executeQuery("select * from Employee");  
+						      while(rs.next()) { 
+						      System.out.println(rs.getString(1)+"  | "+rs.getInt(2)+" | "+rs.getInt(3)+" | "+rs.getString(4)+"  | "+rs.getInt(5));
+						      }
+						      break;
+						}//end of case 1 here.
+					
+					case 2:{
+						System.out.println("Enter the Id of the Employee for the updatetion");
+						int id1=sc.nextInt();
+						System.out.println("What you wan to update choice please ");
+						System.out.println("a.name\nb.age\nc.departement\nd.salary\ne.ID");
+						String ch=sc.next();
+						switch(ch) {
+						case "a":{
+							System.out.println("Enter the new name ");
+							num=sc.next();
+							PreparedStatement pstmt1=con.prepareStatement("update Employee set name = ? where id = ?");
+							pstmt1.setString(1,num);
+							pstmt1.setInt(2,id1);
+							int modify=pstmt1.executeUpdate();
+							if(modify>0) 
+								 System.out.println("One Row updated");
+							     Statement stmt=con.createStatement();  
+							     ResultSet rs=stmt.executeQuery("select * from Employee");  
+							     while(rs.next()) { 
+							     System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+							break;
+						}
+						case "b":{
+							System.out.println("Enter the new age ");
+							age=sc.nextInt();
+							PreparedStatement pstmt1=con.prepareStatement("update Employee set age =? where id =?");
+							pstmt1.setInt(1,age);
+							pstmt1.setInt(2,id1);
+							int modify=pstmt1.executeUpdate();
+							if(modify>0) 
+								 System.out.println("One Row updated");
+							     Statement stmt=con.createStatement();  
+							     ResultSet rs=stmt.executeQuery("select * from Employee");  
+							     while(rs.next()) { 
+							     System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+							break;
+						}
+						
+						case "c":{
+							System.out.println("Enter the new Departemnet ");
+							dep=sc.next();
+							PreparedStatement pstmt1=con.prepareStatement("update Employee set dept =?where id =?");
+							pstmt1.setString(1,dep);
+							pstmt1.setInt(2,id1);
+							int modify=pstmt1.executeUpdate();
+							if(modify>0) 
+								 System.out.println("One Row updated");
+							     Statement stmt=con.createStatement();  
+							     ResultSet rs=stmt.executeQuery("select * from Employee");  
+							     while(rs.next()) { 
+							     System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+							break;
+						}
+						case "d":{
+							System.out.println("Enter the new salary ");
+							sal=sc.nextInt();
+							PreparedStatement pstmt1=con.prepareStatement("update Employee set sal = ? where id= ?");
+							pstmt1.setInt(1,sal);
+							pstmt1.setInt(2,id1);
+							int modify=pstmt1.executeUpdate();
+							if(modify>0) 
+								 System.out.println("One Row updated");
+							     Statement stmt=con.createStatement();  
+							     ResultSet rs=stmt.executeQuery("select * from Employee");  
+							     while(rs.next()) { 
+							     System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+							break;
+						}	
+						
+						case "e":{
+							System.out.println("Enter the new ID ");
+							id=sc.nextInt();
+							PreparedStatement pstmt1=con.prepareStatement("update Employee set id = ? where id= ?");
+							pstmt1.setInt(1,id);
+							pstmt1.setInt(2,id1);
+							int modify=pstmt1.executeUpdate();
+							if(modify>0) 
+								 System.out.println("One Row updated");
+							     Statement stmt=con.createStatement();  
+							     ResultSet rs=stmt.executeQuery("select * from Employee");  
+							     while(rs.next()) { 
+							     System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+							break;
+						}	
+				  }//end of second switch case.
+						break;
+				}//end of case 2 here.
+					
+					case 3:{
+						System.out.println("Enter the id of the employee for deletion");
+						id=sc.nextInt();
+						PreparedStatement pstmt2=con.prepareStatement("delete from Employee where id=?");
+						pstmt2.setInt(1,id);
+						int delete=pstmt2.executeUpdate();
+						if(delete>0) 
+							System.out.println(delete+" row deleted");
+						    Statement stmt=con.createStatement();  
+						    ResultSet rs=stmt.executeQuery("select * from Employee");  
+						    while(rs.next())  {
+						    System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+						break;
+					}//end of case 3 here.
+					
+					case 4:
+					{
+						System.out.println("Enter the Salary from where you want Employees details ");
+						sal=sc.nextInt();
+						Statement stmt=con.createStatement();
+						ResultSet rs=stmt.executeQuery("select * from Employee where sal>= "+sal);
+						 while(rs.next())  {
+							    System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); }
+							break;
+					}//end of case 4 here.
+					
+					case 5:{
+						System.out.println("Coming out from database");
+						System.out.println("Final reasult is :-");
+						Statement stmt=con.createStatement();  
+						ResultSet rs=stmt.executeQuery("select * from Employee");  
+						while(rs.next())  
+						System.out.println(rs.getString(1)+"  "+rs.getInt(2)+" "+rs.getInt(3)+"  "+rs.getString(4)+" "+rs.getInt(5)); 
+						con.close(); 
+						break;
+					}//end of case 5 here.
+		         }//end of first switch case		
+	          }//end of while loop here.
+		      con.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+      
+    
+	}
+
+}
